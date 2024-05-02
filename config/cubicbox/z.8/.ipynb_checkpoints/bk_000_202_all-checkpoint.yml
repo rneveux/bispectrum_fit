@@ -1,0 +1,119 @@
+estimator: 
+    - 'Bk'
+
+multipoles: 
+    - '000'
+    - '202'
+
+cov_mock_nb: 1000
+
+k_edges:
+    'Bk':
+        '000':
+            - .02
+            - .08
+        '202':
+            - .02
+            - .08
+
+data_dir: '/home/swang/share/rneveux/FirstGenMocks_AbacusSummit/CubicBox/LRG/z0.800/stable/bispec/'
+    
+name_file:
+    'Bk':
+        '000': 'bk000_CubicBox_rsd_phmean_kbk'
+        '202': 'bk202_CubicBox_rsd_phmean_kbk'
+        
+cov_file: '/home/rneveux/covariance_matrix/cov_FirstGenMocks_EZmock_Cubic_LRG_z0.800_bk000_bk202.npy'
+
+rescale: false
+
+h_fid: .6736
+omega_b_fid: .02237
+omega_cdm_fid: .12
+n_s_fid: .9649
+A_s_fid: 2.0830e-9
+
+prior: 
+    'b1':
+        'type': 'Uni'
+        'lim':
+            - 0
+            - 4
+    'b2':
+        'type': 'Uni'
+        'lim':
+            - -15
+            - 15
+    'bG2':
+        'type': 'Uni'
+        'lim':
+            - -15
+            - 15
+    'c1':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c2':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'Pshot':
+        'type': 'Uni'
+        'lim':
+            - -10
+            - 10
+    'Bshot':
+        'type': 'Uni'
+        'lim':
+            - -10
+            - 10
+    'fnlequi':
+        'type': 'Fix'
+        'lim': 0
+    'fnlortho':
+        'type': 'Fix'
+        'lim': 0
+    'omega_cdm':
+        'type': 'Uni'
+        'lim': #.12
+            - .102
+            - .139
+    'omega_b':
+        'type': 'Gauss'
+        'lim': #.02237
+            - .02237
+            - .00037
+    'h':
+        'type': 'Uni'
+        'lim': #.6736
+            - .575
+            - .747
+    'n_s':
+        'type': 'Fix'
+        'lim': .9649
+    'ln10^{10}A_s':
+        'type': 'Uni'
+        'lim': #3.0364
+            - 2.78
+            - 3.32
+
+z_eff: .8
+
+mean_density: 1.0e-3
+
+save_directory: '/home/rneveux/fit_results/FirstGenMocks_AbacusSummit/CubicBox/LRG/z0.800/'
+
+spec: 'test_kmin2_kmax8_all'
+
+multipoles_to_use:
+    'Bk':
+        - '000'
+        - '202'
+        
+#k_dir: '/home/rneveux/kernels/bk/z.8/k_1_20'
+
+window: false
+
+sampler: poco

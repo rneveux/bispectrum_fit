@@ -1,0 +1,118 @@
+estimator: 
+    - 'Pk'
+
+multipoles: 
+    - '0'
+    - '2'
+    - '4'
+
+cov_mock_nb: 1000
+
+k_edges:
+    'Pk':
+        '0':
+            - .02
+            - .18
+        '2':
+            - .02
+            - .18
+        '4':
+            - .02
+            - .18
+
+data_dir: '/home/swang/share/rneveux/FirstGenMocks_AbacusSummit/CubicBox/LRG/z0.800/stable/powspec/'
+    
+name_file:
+    'Pk':
+        '0': 'pk0_CubicBox_rsd_phmean_kpk'
+        '2': 'pk2_CubicBox_rsd_phmean_kpk'
+        '4': 'pk4_CubicBox_rsd_phmean_kpk'
+        
+cov_file: '/home/rneveux/covariance_matrix/cov_FirstGenMocks_EZmock_Cubic_LRG_z0.800_pk0_pk2_pk4.npy'
+
+rescale: .04
+
+h_fid: .6736
+omega_b_fid: .02237
+omega_cdm_fid: .12
+n_s_fid: .9649
+A_s_fid: 2.0830e-9
+
+prior: 
+    'b1':
+        'type': 'Uni'
+        'lim':
+            - 0
+            - 10
+    'b2':
+        'type': 'Uni'
+        'lim':
+            - -5
+            - 5
+    'bG2':
+        'type': 'Uni'
+        'lim':
+            - -5
+            - 5
+    'bGamma3':
+        'type': 'Uni'
+        'lim':
+            - -5
+            - 5
+    'c0':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c1':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c2':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'ch':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'Pshot':
+        'type': 'Uni'
+        'lim':
+            - -5
+            - 10
+    'a0':
+        'type': 'Uni'
+        'lim':
+            - -5
+            - 10
+    'omega_cdm':
+        'type': 'Fix'
+        'lim': .12
+    'omega_b':
+        'type': 'Fix'
+        'lim': .02237
+    'h':
+        'type': 'Fix'
+        'lim': .6736
+    'n_s':
+        'type': 'Fix'
+        'lim': .9649
+    'ln10^{10}A_s':
+        'type': 'Fix'
+        'lim': 3.0364
+
+z_eff: .8
+
+mean_density: 1.0e-3
+
+save_directory: '/home/rneveux/fit_results/FirstGenMocks_AbacusSummit/CubicBox/LRG/z0.800/'
+
+spec: 'kmin2_kmax18_all'
+
+multipoles_to_use: false
+
+window: false

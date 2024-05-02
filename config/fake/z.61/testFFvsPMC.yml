@@ -1,0 +1,158 @@
+estimator: 
+    - 'Pk'
+    #- 'Bk'
+
+multipoles: 
+    - '0'
+    - '2'
+    #- '000'
+    #- '202'
+
+cov_mock_nb: 'analytic'
+
+k_edges:
+    'Pk':
+        '0':
+            - .01
+            - .22
+        '2':
+            - .01
+            - .22
+    'Bk':
+        '000':
+            - .015
+            - .115
+        '202':
+            - .015
+            - .115
+
+data_dir: '/home/rneveux/testFFagainstMCMC/'
+    
+name_file:
+    'Pk':
+        '0': 'dat_P0_61.txt'
+        '2': 'dat_P2_61.txt'
+    'Bk':
+        '000': 'dat_B000_61.txt'
+        '202': 'dat_B202_61.txt'
+        
+cov_file: '/home/rneveux/testFFagainstMCMC/cov_61.npy'
+
+rescale: false
+
+h_fid: .673
+omega_b_fid: .022
+omega_cdm_fid: .1202
+n_s_fid: .965
+A_s_fid: 2.101e-9
+
+prior: 
+
+    'b1':
+        'type': 'Uni'
+        'lim':
+            - 0
+            - 4
+    'b2':
+        'type': 'Uni'
+        'lim':
+            - -15
+            - 15
+    'bG2':
+        'type': 'Uni'
+        'lim':
+            - -15
+            - 15
+    'bGamma3':
+        'type': 'Fix' #'Uni'
+        'lim': 0
+            #- -15
+            #- 15
+    'c0':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c2pp':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'ch':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c1':
+        'type': 'Fix' #'Uni'
+        'lim': 0
+            #- -1000
+            #- 1000
+    'c2':
+        'type': 'Fix' #'Uni'
+        'lim': 0
+            #- -1000
+            #- 1000
+    'Pshot':
+        'type': 'Uni'
+        'lim':
+            - -10
+            - 10
+    'a0':
+        'type': 'Uni'
+        'lim':
+            - -10
+            - 10
+    'Bshot':
+        'type': 'Fix' #'Uni'
+        'lim': 0
+            #- -10
+            #- 10
+    'fnlequi':
+        'type': 'Fix'
+        'lim': 0
+    'fnlortho':
+        'type': 'Fix'
+        'lim': 0
+    'omega_cdm':
+        'type': 'Uni'
+        'lim': #.12
+            - .0563
+            - .1841
+    'omega_b':
+        'type': 'Fix'
+        'lim': .022
+            #- .02237
+            #- .00037
+    'h':
+        'type': 'Uni'
+        'lim': #.6736
+            - .5796
+            - .7664
+    'n_s':
+        'type': 'Fix'
+        'lim': .965
+    'ln10^{10}A_s':
+        'type': 'Uni'
+        'lim': #3.0364
+            - 1.309
+            - 4.781
+
+z_eff: .61
+
+mean_density: 1.0e-3
+
+save_directory: '/home/rneveux/fit_results/Fake/z0.610/'
+
+spec: 'kmin1_kmaxpk22'
+
+multipoles_to_use: false
+    #'Bk':
+    #    - '000'
+    #    - '202'
+        
+#k_dir: '/home/rneveux/kernels/bk/z.8/k_1_20'
+
+window: false
+
+sampler: 'poco'

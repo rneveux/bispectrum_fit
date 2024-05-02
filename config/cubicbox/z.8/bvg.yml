@@ -1,0 +1,146 @@
+estimator: 
+    - 'Pk'
+    - 'Bk'
+
+multipoles: 
+    - '0'
+    - '2'
+    - '000'
+    - '202'
+
+cov_mock_nb: 1000
+
+k_edges:
+    'Pk':
+        '0':
+            - .02
+            - .18
+        '2':
+            - .02
+            - .18
+    'Bk':
+        '000':
+            - .02
+            - .08
+        '202':
+            - .02
+            - .08
+
+data_dir: '/home/bvosgines/bispectrum/LRG_pk_bk/'
+    
+name_file:
+    'Pk':
+        '0': 'powspec/pk0_diagLRG_seedmean_hod1_RSD.txt'
+        '2': 'powspec/pk2_diagLRG_seedmean_hod1_RSD.txt'
+    'Bk':
+        '000': 'bispec/bk000_diagLRG_seedmean_hod1_RSD_raw.txt'
+        '202': 'bispec/bk202_diagLRG_seedmean_hod1_RSD_raw.txt'
+        
+cov_file: '/home/rneveux/covariance_matrix/cov_FirstGenMocks_EZmock_Cubic_LRG_z0.800_pk0_pk2_pk4_bk000_bk202.npy'
+
+rescale: .04
+
+h_fid: .6736
+omega_b_fid: .02237
+omega_cdm_fid: .12
+n_s_fid: .9649
+A_s_fid: 2.0830e-9
+
+prior: 
+    'b1':
+        'type': 'Uni'
+        'lim': #1.9599
+            - 0
+            - 10
+    'b2':
+        'type': 'Uni'
+        'lim': #2.1534
+            - -5
+            - 5
+    'bG2':
+        'type': 'Uni'
+        'lim': #1.8532
+            - -5
+            - 5
+    'bGamma3':
+        'type': 'Uni'
+        'lim': #-4.487
+            - -10
+            - 5
+    'c0':
+        'type': 'Uni'
+        'lim': #-2.0889
+            - -1000
+            - 1000
+    'c1':
+        'type': 'Uni'
+        'lim': #3.584
+            - -1000
+            - 1000
+    'c2':
+        'type': 'Uni'
+        'lim': #6.344
+            - -1000
+            - 1000
+    'ch':
+        'type': 'Uni'
+        'lim': #520.31
+            - -1000
+            - 1000
+    'Pshot':
+        'type': 'Uni'
+        'lim': #3.1282
+            - -5
+            - 10
+    'a0':
+        'type': 'Uni'
+        'lim': #-4.3349
+            - -20
+            - 10
+    'Bshot':
+        'type': 'Uni'
+        'lim': #4.5376
+            - -5
+            - 20
+    'fnlequi':
+        'type': 'Uni'
+        'lim': #0
+            - -1000
+            - 1000
+    'fnlortho':
+        'type': 'Fix'
+        'lim': 0
+          #- -1000
+          #  - 1000
+    'omega_cdm':
+        'type': 'Fix'
+        'lim': .12
+    'omega_b':
+        'type': 'Fix'
+        'lim': .02237
+    'h':
+        'type': 'Fix'
+        'lim': .6736
+    'n_s':
+        'type': 'Fix'
+        'lim': .9649
+    'ln10^{10}A_s':
+        'type': 'Fix'
+        'lim': 3.0364
+
+z_eff: .8
+
+mean_density: 1.0e-3
+
+save_directory: '/home/bvosgines/fit_results/'
+
+spec: 'kmin2_kmaxpk18_kmaxbk8_rescaled25_hod1_biases_fnl_equi'
+
+multipoles_to_use:
+    'Bk':
+        - '000'
+        - '202'
+        
+k_dir: '/home/rneveux/kernels/bk/z.8/k_1_20'
+
+window: false
