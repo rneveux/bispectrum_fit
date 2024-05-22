@@ -25,7 +25,7 @@ name_file:
         
 cov_file: '/home/rneveux/covariance_matrix/cov_FirstGenMocks_EZmock_Cubic_LRG_z0.800_pk0_pk2_pk4.npy'
 
-rescale: .04
+rescale: false
 
 h_fid: .6736
 omega_b_fid: .02237
@@ -122,7 +122,7 @@ mean_density: 1.0e-3
 
 save_directory: '/home/rneveux/fit_results/FirstGenMocks_AbacusSummit/CubicBox/LRG/z0.800/'
 
-spec: 'test_kmin2_kmax18_all_rescaled'
+spec: 'test_kmin2_kmax18_all'
 
 multipoles_to_use: false
 

@@ -15,8 +15,6 @@ import time
 from multiprocessing import Pool
 import matryoshka.emulator as matry
 
-
-
 group = [
             ['c2_b2_f', 'c2_b1_b2',  'c2_b1_b1',  'c2_b1_f', 'c2_b1_f', 'c1_b1_b1_f', 
                 'c1_b2_f', 'c1_b1_b2', 'c1_b1_b1', 'c2_b1_b1_f', 'c1_b1_f'],
@@ -211,6 +209,7 @@ def loglike_poco(theta, data, icov):
     """
     utils['values'].update({par: value for par, value in zip(utils['sorted'], theta)})
     #t0 = time.time()
+    print('log')
     model_vect = model(utils)
     #t1 = time.time()
     diff = model_vect - data
@@ -262,7 +261,7 @@ def model(params):
     if params['cosmo_inference']:
         params['values_cosmo'] = {}
         params['values_cosmo_list'] = []
-        for key in ['h', 'ln10^{10}A_s','omega_cdm']:#['omega_cdm', 'omega_b', 'h', 'ln10^{10}A_s', 'n_s']:
+        for key in ['omega_cdm', 'omega_b', 'h', 'ln10^{10}A_s', 'n_s']:
                 params['values_cosmo'][key] = params['values'][key]
                 params['values_cosmo_list'].append(params['values'][key])
 
@@ -310,11 +309,32 @@ def model(params):
 
     model_vect = []
 
+
+    print('...')
     if 'Pk' in params['estimator']:
+        if params['cosmo_inference']=='classpt':
+            c = Class()
+            c.set(params['cosmo_classpt'])
+            for key in ['h', 'omega_b', 'omega_cdm', 'n_s', 'ln10^{10}A_s']:
+                c.set({key: params['values'][key]})
+            c.set({'non linear':'PT',
+                'IR resummation':'Yes',
+                'Bias tracers':'Yes',
+                'cb':'Yes',
+                'RSD':'Yes',
+                'AP':'Yes',
+                'Omfid':params['cosmo_fid']['omega_cdm']/params['cosmo_fid']['h']**2,
+                'output':'mPk',
+                'z_pk':params['z_eff']
+            })
+            c.compute()
+            c.initialize_output(params['k_model']['Pk']*params['h'], params['z_eff'], len(params['k_model']['Pk']))
         pk_evaluation = {}
         for ell in params['multipoles']['Pk']:
             #t0 = time.time()
+            print('pk eval to start')
             pk_evaluation[ell] = pk_model_evaluation(ell, params)
+            print('pk evaluated')
             #t1 = time.time()
             #print(f'eval {ell}: ', t1-t0)
         if params['ap_approx']:
@@ -401,7 +421,7 @@ def pk_model_evaluation(ell, params):
     mean_density = params['mean_density']
     fz = params['fz']
     
-    if params['cosmo_inference']:
+    if params['cosmo_inference']==True:
         Pstoch = 0                                        
         if ell == '0':
             #cl = c0 + fz / 3 * c1 + fz ** 2 / 5 * c2
@@ -413,6 +433,30 @@ def pk_model_evaluation(ell, params):
         elif ell == '4':
             cl = c4pp
         pk_model = params['emu_pk'][ell].emu_predict(params['values_cosmo_list'], np.array([b1,b2,bG2,bGamma3,ch,cl]))[0] + Pstoch
+    elif params['cosmo_inference']=='c':
+        if ell == '0':
+            if Pshot==0: Pshot_norm = 0
+            else: Pshot_norm = (1 + Pshot + a0*params['k_model']['Pk']**2) / mean_density
+            pk_model = params['class_fid'].pk_gg_l0(b1, b2, bG2, bGamma3, c0, 0, ch)
+            pk_model += Pshot_norm
+            if fnlequi != 0:
+                pk_model += fnlequi * params['class_fid'].pk_gg_fNL_l0(b1, b2, bG2)
+            if fnlortho != 0:
+                pk_model += fnlortho * params['class_fid'].pk_gg_fNL_l0_ortho(b1, b2, bG2)
+        elif ell == '2':
+            cs2 = c2pp
+            pk_model = params['class_fid'].pk_gg_l2(b1, b2, bG2, bGamma3, cs2, ch)
+            if fnlequi != 0:
+                pk_model += fnlequi * params['class_fid'].pk_gg_fNL_l2(b1, b2, bG2)
+            if fnlortho != 0:
+                pk_model += fnlortho * params['class_fid'].pk_gg_fNL_l2_ortho(b1, b2, bG2)
+        elif ell == '4':
+            cs4 = c4pp
+            pk_model = params['class_fid'].pk_gg_l4(b1, b2, bG2, bGamma3, cs4, ch)
+            if fnlequi != 0:
+                pk_model += fnlequi * params['class_fid'].pk_gg_fNL_l4(b1, b2, bG2)
+            if fnlortho != 0:
+                pk_model += fnlortho * params['class_fid'].pk_gg_fNL_l4_ortho(b1, b2, bG2)
     elif 'f' in params['values']:
         f = params['values']['f']
         M_mult = params['class_fid'].get_pk_mult(params['k_model']['Pk']*params['cosmo_fid']['h'], 
@@ -870,17 +914,22 @@ def kernels_from_emulator(ell, params):
     dict: Evaluation of each kernel on emu.kbins.
     """
 
+    '''params_cosmo_list = [
+        params['values']['omega_cdm'],
+        params['values']['omega_b'],
+        params['values']['h'],
+        params['values']['ln10^{10}A_s'],
+        params['values']['n_s']
+    ]'''
     params_cosmo_list = [
-        #params['values']['omega_cdm'],
-        #params['values']['omega_b'],
         params['values']['h'],
         params['values']['ln10^{10}A_s'],
         params['values']['omega_cdm'],
-        #params['values']['n_s']
     ]
     
     kernels = {}
     for gp in params['emu'][ell].keys():
+        print(params_cosmo_list)
         predictions = params['emu'][ell][gp].emu_predict(params_cosmo_list, split=True)
 
         if gp==8:
@@ -1133,7 +1182,8 @@ def class_As(params_cosmo, redshift, PT=False):
     c.set(
         {'N_ur':2.0328, 
         'N_ncdm':1, 
-        'omega_ncdm':0.0006442,
+        'm_ncdm': 0.1,
+        #'omega_ncdm': 0.0006442,
         'z_pk':redshift}
         )
 
@@ -1383,6 +1433,8 @@ class PrepareFit(ComputePowerBiSpectrum):
         icov = self.inv_cov()
         global utils
         utils = self.params
+
+        print('Start fit')
         
         if minuit:
             self.m = Minuit(logpost_minuit, theta, name=self.params['sorted'])
@@ -1434,8 +1486,10 @@ class PrepareFit(ComputePowerBiSpectrum):
             else:
 
                 ncpus = int(os.getenv('SLURM_CPUS_PER_TASK'))
+                print(ncpus)
                 
                 with Pool(ncpus) as pool:
+                    print('pool')
 
                     sampler = pc.Sampler(n_particles = n_particles,
                                      n_dim = ndim,
@@ -1448,6 +1502,7 @@ class PrepareFit(ComputePowerBiSpectrum):
                                      output_label=name,
                                      infer_vectorization=False,
                                     )
+                    print('poco')
 
                     sampler.run(prior_samples = prior_samples,
                         #save_every = 3,
@@ -1736,6 +1791,12 @@ if __name__ == '__main__':
     for p in ['h', 'omega_b', 'omega_cdm', 'n_s', 'ln10^{10}A_s']:
         if prior[p]['type']!= 'Fix':
             c_inference = True
+        if config['direct_classpt']:
+            c_inference = 'classpt'
+            cosmo_classpt = cosmo_fid.copy()
+            del cosmo_classpt['A_s']
+        else:
+            cosmo_classpt = None
     if 'Bk' in estimator:
         if c_inference:
             kernels_bk = True
@@ -1760,12 +1821,14 @@ if __name__ == '__main__':
         
     
     params = {'prior':prior, 'with_kernels':kernels_bk, 'kernels_directory':k_dir, 'cosmo_inference':c_inference, 'z_eff':z_eff,
-              'cosmo_fid':cosmo_fid, 'mean_density':mean_density, 'window':window, 'kernels_pk':kernels_pk,
+              'cosmo_fid':cosmo_fid, 'cosmo_classpt':cosmo_classpt, 'mean_density':mean_density, 'window':window, 'kernels_pk':kernels_pk,
               'multipoles_to_use':multipoles_to_use, 'ortho_LSS': ortho_LSS}
 
     cl = PrepareFit(estimator, multipoles, k_edges, cov_mock_nb)
     cl.data_prep(name_file)
+    print('data prepared')
     cl.cov_prep(cov_name=cov_file, rescale=rescale)
+    print('cov prepared')
     cl.fit(save_directory, name_save, params, poco=poco, minuit=minuit)
 
 

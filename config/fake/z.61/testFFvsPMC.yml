@@ -38,13 +38,13 @@ name_file:
         
 cov_file: '/home/rneveux/testFFagainstMCMC/cov_61.npy'
 
-rescale: false
-
 h_fid: .673
 omega_b_fid: .022
 omega_cdm_fid: .1202
 n_s_fid: .965
 A_s_fid: 2.101e-9
+
+rescale: .1
 
 prior: 
 
@@ -64,10 +64,10 @@ prior:
             - -15
             - 15
     'bGamma3':
-        'type': 'Fix' #'Uni'
-        'lim': 0
-            #- -15
-            #- 15
+        'type': 'Uni'
+        'lim': #0
+            - -15
+            - 15
     'c0':
         'type': 'Uni'
         'lim':
@@ -84,15 +84,15 @@ prior:
             - -1000
             - 1000
     'c1':
-        'type': 'Fix' #'Uni'
-        'lim': 0
-            #- -1000
-            #- 1000
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
     'c2':
-        'type': 'Fix' #'Uni'
-        'lim': 0
-            #- -1000
-            #- 1000
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
     'Pshot':
         'type': 'Uni'
         'lim':
@@ -104,10 +104,10 @@ prior:
             - -10
             - 10
     'Bshot':
-        'type': 'Fix' #'Uni'
-        'lim': 0
-            #- -10
-            #- 10
+        'type': 'Uni'
+        'lim': 
+            - -10
+            - 10
     'fnlequi':
         'type': 'Fix'
         'lim': 0
@@ -140,11 +140,11 @@ prior:
 
 z_eff: .61
 
-mean_density: 1.0e-3
+mean_density: 2.0e-4
 
 save_directory: '/home/rneveux/fit_results/Fake/z0.610/'
 
-spec: 'kmin1_kmaxpk22'
+spec: 'kmin1_kmaxpk22_rescaled10_classpt'
 
 multipoles_to_use: false
     #'Bk':
@@ -154,5 +154,7 @@ multipoles_to_use: false
 #k_dir: '/home/rneveux/kernels/bk/z.8/k_1_20'
 
 window: false
+
+direct_classpt: false
 
 sampler: 'poco'
