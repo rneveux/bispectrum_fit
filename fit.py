@@ -209,7 +209,6 @@ def loglike_poco(theta, data, icov):
     """
     utils['values'].update({par: value for par, value in zip(utils['sorted'], theta)})
     #t0 = time.time()
-    print('log')
     model_vect = model(utils)
     #t1 = time.time()
     diff = model_vect - data
@@ -309,8 +308,6 @@ def model(params):
 
     model_vect = []
 
-
-    print('...')
     if 'Pk' in params['estimator']:
         if params['cosmo_inference']=='classpt':
             c = Class()
@@ -328,13 +325,12 @@ def model(params):
                 'z_pk':params['z_eff']
             })
             c.compute()
-            c.initialize_output(params['k_model']['Pk']*params['h'], params['z_eff'], len(params['k_model']['Pk']))
+            c.initialize_output(params['k_model']['Pk']*params['values']['h'], params['z_eff'], len(params['k_model']['Pk']))
+            params['class_pt'] = c
         pk_evaluation = {}
         for ell in params['multipoles']['Pk']:
             #t0 = time.time()
-            print('pk eval to start')
             pk_evaluation[ell] = pk_model_evaluation(ell, params)
-            print('pk evaluated')
             #t1 = time.time()
             #print(f'eval {ell}: ', t1-t0)
         if params['ap_approx']:
@@ -397,7 +393,6 @@ def pk_model_evaluation(ell, params):
     ell (str): Multipole.
     params (dict): Util parameters.
         params['cosmo_inference'] (bool): If True, cosmological parameters vary.
-        params['with_kernels'] (bool): If True, kernel decomposition is used.
         params['z_eff'] (float): Effective redshift of the analysis.
         params['values'] (list): List of model parameter values.
 
@@ -433,30 +428,30 @@ def pk_model_evaluation(ell, params):
         elif ell == '4':
             cl = c4pp
         pk_model = params['emu_pk'][ell].emu_predict(params['values_cosmo_list'], np.array([b1,b2,bG2,bGamma3,ch,cl]))[0] + Pstoch
-    elif params['cosmo_inference']=='c':
+    elif params['cosmo_inference']=='classpt':
         if ell == '0':
             if Pshot==0: Pshot_norm = 0
             else: Pshot_norm = (1 + Pshot + a0*params['k_model']['Pk']**2) / mean_density
-            pk_model = params['class_fid'].pk_gg_l0(b1, b2, bG2, bGamma3, c0, 0, ch)
+            pk_model = params['class_pt'].pk_gg_l0(b1, b2, bG2, bGamma3, c0, 0, ch)
             pk_model += Pshot_norm
             if fnlequi != 0:
-                pk_model += fnlequi * params['class_fid'].pk_gg_fNL_l0(b1, b2, bG2)
+                pk_model += fnlequi * params['class_pt'].pk_gg_fNL_l0(b1, b2, bG2)
             if fnlortho != 0:
-                pk_model += fnlortho * params['class_fid'].pk_gg_fNL_l0_ortho(b1, b2, bG2)
+                pk_model += fnlortho * params['class_pt'].pk_gg_fNL_l0_ortho(b1, b2, bG2)
         elif ell == '2':
             cs2 = c2pp
-            pk_model = params['class_fid'].pk_gg_l2(b1, b2, bG2, bGamma3, cs2, ch)
+            pk_model = params['class_pt'].pk_gg_l2(b1, b2, bG2, bGamma3, cs2, ch)
             if fnlequi != 0:
-                pk_model += fnlequi * params['class_fid'].pk_gg_fNL_l2(b1, b2, bG2)
+                pk_model += fnlequi * params['class_pt'].pk_gg_fNL_l2(b1, b2, bG2)
             if fnlortho != 0:
-                pk_model += fnlortho * params['class_fid'].pk_gg_fNL_l2_ortho(b1, b2, bG2)
+                pk_model += fnlortho * params['class_pt'].pk_gg_fNL_l2_ortho(b1, b2, bG2)
         elif ell == '4':
             cs4 = c4pp
-            pk_model = params['class_fid'].pk_gg_l4(b1, b2, bG2, bGamma3, cs4, ch)
+            pk_model = params['class_pt'].pk_gg_l4(b1, b2, bG2, bGamma3, cs4, ch)
             if fnlequi != 0:
-                pk_model += fnlequi * params['class_fid'].pk_gg_fNL_l4(b1, b2, bG2)
+                pk_model += fnlequi * params['class_pt'].pk_gg_fNL_l4(b1, b2, bG2)
             if fnlortho != 0:
-                pk_model += fnlortho * params['class_fid'].pk_gg_fNL_l4_ortho(b1, b2, bG2)
+                pk_model += fnlortho * params['class_pt'].pk_gg_fNL_l4_ortho(b1, b2, bG2)
     elif 'f' in params['values']:
         f = params['values']['f']
         M_mult = params['class_fid'].get_pk_mult(params['k_model']['Pk']*params['cosmo_fid']['h'], 
@@ -929,7 +924,6 @@ def kernels_from_emulator(ell, params):
     
     kernels = {}
     for gp in params['emu'][ell].keys():
-        print(params_cosmo_list)
         predictions = params['emu'][ell][gp].emu_predict(params_cosmo_list, split=True)
 
         if gp==8:
@@ -1182,8 +1176,7 @@ def class_As(params_cosmo, redshift, PT=False):
     c.set(
         {'N_ur':2.0328, 
         'N_ncdm':1, 
-        'm_ncdm': 0.1,
-        #'omega_ncdm': 0.0006442,
+        'omega_ncdm': 0.0006442,
         'z_pk':redshift}
         )
 
@@ -1428,13 +1421,13 @@ class PrepareFit(ComputePowerBiSpectrum):
             theta=[]
             for i,p in enumerate(self.params['sorted']):
                 theta.append(start[0,i])
+            print('theta', theta)
+            print('sorted', self.params['sorted'])
                 
         data = self.data_vec
         icov = self.inv_cov()
         global utils
         utils = self.params
-
-        print('Start fit')
         
         if minuit:
             self.m = Minuit(logpost_minuit, theta, name=self.params['sorted'])
@@ -1489,7 +1482,6 @@ class PrepareFit(ComputePowerBiSpectrum):
                 print(ncpus)
                 
                 with Pool(ncpus) as pool:
-                    print('pool')
 
                     sampler = pc.Sampler(n_particles = n_particles,
                                      n_dim = ndim,
@@ -1502,7 +1494,6 @@ class PrepareFit(ComputePowerBiSpectrum):
                                      output_label=name,
                                      infer_vectorization=False,
                                     )
-                    print('poco')
 
                     sampler.run(prior_samples = prior_samples,
                         #save_every = 3,
@@ -1679,7 +1670,7 @@ class PrepareFit(ComputePowerBiSpectrum):
                         tmp = np.load(fichier,allow_pickle=True).item()
                         self.Bk_kernels[ell][b] = tmp['K']
                     self.Bk_kernels_k[ell] = tmp['kbin']
-                    self.params['k_emul'][ell] = self.Bk_kernels_k[ell]
+                self.params['k_emul'] = self.Bk_kernels_k['000']
 
 
             elif self.params['with_kernels'] == 'to_compute':
@@ -1703,7 +1694,7 @@ class PrepareFit(ComputePowerBiSpectrum):
 
     def set_power_spectrum_model(self):
 
-        if self.params['cosmo_inference']:
+        if self.params['cosmo_inference'] == True:
             z = self.params['z_eff']
             kemul = np.loadtxt(os.path.join(self.cache_path, 'powerspec/k_emul.txt'))
             self.params['emu_pk'] = {ell: BICKER.power(ell, kemul, self.cache_path) for ell in self.multipoles['Pk']}
@@ -1826,9 +1817,7 @@ if __name__ == '__main__':
 
     cl = PrepareFit(estimator, multipoles, k_edges, cov_mock_nb)
     cl.data_prep(name_file)
-    print('data prepared')
     cl.cov_prep(cov_name=cov_file, rescale=rescale)
-    print('cov prepared')
     cl.fit(save_directory, name_save, params, poco=poco, minuit=minuit)
 
 

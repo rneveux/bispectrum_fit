@@ -110,7 +110,7 @@ prior:
     'fnlequi':
         'type': 'Fix'
         'lim': 0
-    'fnlortho':
+    'fnlortho_LSS':
         'type': 'Fix'
         'lim': 0
     'omega_cdm':
