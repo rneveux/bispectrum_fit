@@ -132,3 +132,7 @@ multipoles_to_use: false
 window: false
 
 sampler: 'poco'
+
+cache_path: '/home/rneveux/bicker_cache/z0.8/'
+
+direct_classpt: false

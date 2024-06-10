@@ -1,0 +1,138 @@
+estimator: 
+    - 'Pk'
+
+multipoles: 
+    - '0'
+    - '2'
+
+cov_mock_nb: 1000
+
+k_edges:
+    'Pk':
+        '0':
+            - .02
+            - .18
+        '2':
+            - .02
+            - .18
+
+data_dir: '/home/rneveux/mocks/DESI/cubicbox_abacus_LRG/'
+    
+name_file:
+    'Pk':
+        '0': 'pk0_CubicBox_rsd_phmean_kpk'
+        '2': 'pk2_CubicBox_rsd_phmean_kpk'
+        
+cov_file: '/home/rneveux/mocks/DESI/cubicbox_abacus_LRG/cov.npy'
+
+rescale: false
+
+h_fid: .6736
+omega_b_fid: .02237
+omega_cdm_fid: .12
+n_s_fid: .9649
+A_s_fid: 2.0830e-9
+
+prior: 
+    'b1':
+        'type': 'Uni'
+        'lim':
+            - 0
+            - 4
+    'b2':
+        'type': 'Uni'
+        'lim':
+            - -15 #0
+            - 15 #10
+    'bG2':
+        'type': 'Uni'
+        'lim': #-0.45
+            - -15
+            - 15
+    'bGamma3':
+        'type': 'Uni'
+        'lim': #.98
+            - -15
+            - 15
+    'c0':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c2pp':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'c4pp':
+        'type': 'Fix'
+        'lim': 0
+            #- -1000
+            #- 1000
+    'ch':
+        'type': 'Uni'
+        'lim':
+            - -1000
+            - 1000
+    'Pshot':
+        'type': 'Uni'
+        'lim':
+            - -10
+            - 10
+    'a0':
+        'type': 'Uni'
+        'lim':
+            - -10
+            - 10
+    'fnlequi':
+        'type': 'Fix'
+        'lim': 0
+            #- -1000
+            #- 1000
+    'fnlortho':
+        'type': 'Fix'
+        'lim': 0
+            #- -1000
+            #- 1000
+    'omega_cdm':
+        'type': 'Uni'
+        'lim': #.12
+            - .102
+            - .139
+    'omega_b':
+        'type': 'Gauss'
+        'lim': #.02237
+            - .02237
+            - .00037
+    'h':
+        'type': 'Uni'
+        'lim': #.6736
+            - .575
+            - .747
+    'n_s':
+        'type': 'Fix'
+        'lim': .9649
+            #- .9649
+    'ln10^{10}A_s':
+        'type': 'Uni'
+        'lim': #3.0364
+            - 2.78
+            - 3.32
+
+z_eff: .8
+
+mean_density: 1.0e-3
+
+save_directory: '/home/rneveux/fit_results/FirstGenMocks_AbacusSummit/CubicBox/LRG/z0.800/'
+
+spec: 'kmin2_kmax18_all_maximal_freedom_nersc_data_TEST'
+
+multipoles_to_use: false
+
+window: false
+
+sampler: 'poco'
+
+cache_path: '/home/rneveux/bicker_cache/z0.8/'
+
+direct_classpt: false

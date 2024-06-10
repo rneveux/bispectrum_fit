@@ -1574,7 +1574,7 @@ class PrepareFit(ComputePowerBiSpectrum):
             self.params['AP_fid'] = {}
             self.params['AP_fid']['DA'] = self.params['class_fid'].angular_distance(self.params['z_eff'])
             self.params['AP_fid']['H'] = self.params['class_fid'].Hubble(self.params['z_eff'])
-            self.cache_path = os.path.expanduser('~')+f'/bicker_cache/z{self.params["z_eff"]}/'
+            self.cache_path = self.params['cache_path'] #os.path.expanduser('~')+f'/bicker_cache/z{self.params["z_eff"]}/'
 
 
         if 'Pk' in self.estimator: self.set_power_spectrum_model()
@@ -1813,7 +1813,7 @@ if __name__ == '__main__':
     
     params = {'prior':prior, 'with_kernels':kernels_bk, 'kernels_directory':k_dir, 'cosmo_inference':c_inference, 'z_eff':z_eff,
               'cosmo_fid':cosmo_fid, 'cosmo_classpt':cosmo_classpt, 'mean_density':mean_density, 'window':window, 'kernels_pk':kernels_pk,
-              'multipoles_to_use':multipoles_to_use, 'ortho_LSS': ortho_LSS}
+              'multipoles_to_use':multipoles_to_use, 'ortho_LSS': ortho_LSS, 'cache_path': config['cache_path']}
 
     cl = PrepareFit(estimator, multipoles, k_edges, cov_mock_nb)
     cl.data_prep(name_file)
