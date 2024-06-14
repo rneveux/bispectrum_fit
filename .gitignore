@@ -1,0 +1,43 @@
+## Bytecode
+__pycache__/
+*.py[cod]
+
+## Objects
+*.o
+
+## Shared libraries (C/C++ extensions)
+*.so
+
+## Static libraries
+*.a
+
+## Cache
+.cache/
+.pytest_cache/
+
+# Distributions
+bdist/
+dist/
+sdist/
+
+## Eggs
+develop-eggs/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+
+## Wheels
+wheelhouse/
+wheels/
+
+# Documentation
+docs/build/
+
+# Development
+## Jupyter Notebook
+.ipynb_checkpoints
+
+## Editors/explorers
+.vscode/
+.DS_Store
